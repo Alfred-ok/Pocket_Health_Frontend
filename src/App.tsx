@@ -1,26 +1,15 @@
 import { BrowserRouter as Router, Routes, Route, Navigate } from "react-router";
 import { useAuthStore } from "./store/authStore";
+import RoleGuard from "./components/common/RoleGuard";
+import AppLayout from "./layout/AppLayout";
+import { ScrollToTop } from "./components/common/ScrollToTop";
 import SignIn from "./pages/AuthPages/SignIn";
 import SignUp from "./pages/AuthPages/SignUp";
 import NotFound from "./pages/OtherPage/NotFound";
-import UserProfiles from "./pages/UserProfiles";
-import Videos from "./pages/UiElements/Videos";
-import Images from "./pages/UiElements/Images";
-import Alerts from "./pages/UiElements/Alerts";
-import Badges from "./pages/UiElements/Badges";
-import Avatars from "./pages/UiElements/Avatars";
-import Buttons from "./pages/UiElements/Buttons";
-import LineChart from "./pages/Charts/LineChart";
-import BarChart from "./pages/Charts/BarChart";
-import Calendar from "./pages/Conslutation";
-import BasicTables from "./pages/Tables/BasicTables";
-import FormElements from "./pages/Forms/FormElements";
-import Blank from "./pages/Blank";
-import AppLayout from "./layout/AppLayout";
-import { ScrollToTop } from "./components/common/ScrollToTop";
 import Home from "./pages/Dashboard/Home";
+import UserProfiles from "./pages/UserProfiles";
+import ComingSoon from "./pages/PocketHealth/ComingSoon";
 
-// Protects all dashboard routes — redirects to /signin if not authenticated
 function PrivateRoute({ children }: { children: React.ReactNode }) {
   const { isAuthenticated } = useAuthStore();
   return isAuthenticated ? <>{children}</> : <Navigate to="/signin" replace />;
@@ -32,36 +21,113 @@ export default function App() {
       <Router>
         <ScrollToTop />
         <Routes>
-          {/* Protected Dashboard Layout */}
-          <Route
-            element={
-              <PrivateRoute>
-                <AppLayout />
-              </PrivateRoute>
-            }
-          >
+
+          {/* Protected layout */}
+          <Route element={<PrivateRoute><AppLayout /></PrivateRoute>}>
+
+            {/* ── All roles ──────────────────────────────────── */}
             <Route index path="/" element={<Home />} />
+
             <Route path="/profile" element={<UserProfiles />} />
-            <Route path="/calendar" element={<Calendar />} />
-            <Route path="/blank" element={<Blank />} />
-            <Route path="/form-elements" element={<FormElements />} />
-            <Route path="/basic-tables" element={<BasicTables />} />
-            <Route path="/alerts" element={<Alerts />} />
-            <Route path="/avatars" element={<Avatars />} />
-            <Route path="/badge" element={<Badges />} />
-            <Route path="/buttons" element={<Buttons />} />
-            <Route path="/images" element={<Images />} />
-            <Route path="/videos" element={<Videos />} />
-            <Route path="/line-chart" element={<LineChart />} />
-            <Route path="/bar-chart" element={<BarChart />} />
+
+            <Route path="/consultations" element={
+              <ComingSoon title="Consultations" icon="🩺"
+                description="Video, audio and chat consultations." />
+            }/>
+
+            <Route path="/appointments" element={
+              <ComingSoon title="Appointments" icon="📅"
+                description="Book and manage in-person or virtual appointments." />
+            }/>
+
+            <Route path="/documents" element={
+              <ComingSoon title="Documents" icon="📄"
+                description="Medical documents, lab results, prescriptions and scans." />
+            }/>
+
+            <Route path="/notifications" element={
+              <ComingSoon title="Notifications" icon="🔔"
+                description="Your alerts, reminders and payment confirmations." />
+            }/>
+
+            {/* ── Patient + Admin ────────────────────────────── */}
+            <Route path="/providers" element={
+              <RoleGuard allowedRoles={["patient","admin"]}>
+                <ComingSoon title="Find Providers" icon="👨‍⚕️"
+                  description="Browse and book verified healthcare providers near you." />
+              </RoleGuard>
+            }/>
+
+            <Route path="/wallet" element={
+              <RoleGuard allowedRoles={["patient","admin"]}>
+                <ComingSoon title="My Wallet" icon="💰"
+                  description="Top up via M-Pesa, view balance and transaction history." />
+              </RoleGuard>
+            }/>
+
+            <Route path="/health-info" element={
+              <RoleGuard allowedRoles={["patient","admin"]}>
+                <ComingSoon title="Health Info" icon="❤️"
+                  description="Blood group, allergies, chronic conditions and medications." />
+              </RoleGuard>
+            }/>
+
+            <Route path="/insurance" element={
+              <RoleGuard allowedRoles={["patient","admin"]}>
+                <ComingSoon title="Insurance" icon="🛡️"
+                  description="Manage NHIF, Jubilee, AAR and other cover details." />
+              </RoleGuard>
+            }/>
+
+            <Route path="/emergency" element={
+              <RoleGuard allowedRoles={["patient","admin"]}>
+                <ComingSoon title="Emergency Contacts" icon="🚨"
+                  description="Emergency contacts ordered by priority." />
+              </RoleGuard>
+            }/>
+
+            {/* ── Provider + Admin ───────────────────────────── */}
+            <Route path="/schedule" element={
+              <RoleGuard allowedRoles={["provider","admin"]}>
+                <ComingSoon title="My Schedule" icon="🗓️"
+                  description="Manage availability, time slots and upcoming appointments." />
+              </RoleGuard>
+            }/>
+
+            <Route path="/earnings" element={
+              <RoleGuard allowedRoles={["provider","admin"]}>
+                <ComingSoon title="Earnings" icon="💵"
+                  description="Consultation earnings, payment history and KES balance." />
+              </RoleGuard>
+            }/>
+
+            <Route path="/medical-requests" element={
+              <RoleGuard allowedRoles={["provider","admin"]}>
+                <ComingSoon title="Medical Requests" icon="💊"
+                  description="Create prescriptions, referrals and lab orders." />
+              </RoleGuard>
+            }/>
+
+            <Route path="/reviews" element={
+              <RoleGuard allowedRoles={["provider","admin"]}>
+                <ComingSoon title="Reviews" icon="⭐"
+                  description="Patient ratings across quality, helpfulness, timeliness and care." />
+              </RoleGuard>
+            }/>
+
+            {/* Unauthorized */}
+            <Route path="/unauthorized" element={
+              <ComingSoon title="Access Restricted" icon="🔒"
+                description="You do not have permission to view this section." />
+            }/>
+
           </Route>
 
-          {/* Public Auth Routes */}
+          {/* Public */}
           <Route path="/signin" element={<SignIn />} />
           <Route path="/signup" element={<SignUp />} />
-
-          {/* Fallback */}
           <Route path="*" element={<NotFound />} />
+
         </Routes>
       </Router>
     </>
