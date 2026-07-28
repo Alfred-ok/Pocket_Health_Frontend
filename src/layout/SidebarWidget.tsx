@@ -11,11 +11,11 @@ export default function SidebarWidget() {
   };
 
   return (
-    <div className="mx-auto mb-10 w-full max-w-60 rounded-2xl bg-gray-50 p-4 dark:bg-white/[0.03]">
+    <div className="mx-auto mb-10 w-full max-w-60 rounded-2xl bg-white/10 p-4">
       {/* User email */}
       {user?.email && (
         <p
-          className="mb-3 truncate text-center text-xs text-gray-500 dark:text-gray-400"
+          className="mb-3 truncate text-center text-xs text-indigo-100"
           title={user.email}
         >
           {user.email}
@@ -25,7 +25,7 @@ export default function SidebarWidget() {
       {/* Sign out */}
       <button
         onClick={handleSignOut}
-        className="w-full rounded-lg bg-red-500 px-4 py-3 text-sm font-medium text-white transition hover:bg-red-600 focus:outline-none focus:ring-2 focus:ring-red-400 focus:ring-offset-2"
+        className="w-full rounded-lg bg-red-500 px-4 py-3 text-sm font-medium text-white transition hover:bg-red-600 focus:outline-none focus:ring-2 focus:ring-red-300 focus:ring-offset-2 focus:ring-offset-indigo-700"
         aria-label="Sign out of PocketHealth"
       >
         Sign Out

@@ -16,7 +16,18 @@ import {
 import { useSidebar } from "../context/SidebarContext";
 import SidebarWidget from "./SidebarWidget";
 import { useAuthStore } from "../store/authStore";
-import RoleBadge from "../components/common/RoleBadge";
+
+const roleDot: Record<string, string> = {
+  patient: "bg-blue-300",
+  provider: "bg-emerald-300",
+  admin: "bg-amber-300",
+};
+
+const roleLabel: Record<string, string> = {
+  patient: "Patient",
+  provider: "Provider",
+  admin: "Admin",
+};
 
 type NavItem = {
   name: string;
@@ -248,7 +259,7 @@ const AppSidebar: React.FC = () => {
                 {showText && (
                   <ChevronDownIcon
                     className={`ml-auto w-5 h-5 transition-transform duration-200 ${
-                      isOpen ? "rotate-180 text-brand-500" : ""
+                      isOpen ? "rotate-180 text-indigo-700" : ""
                     }`}
                   />
                 )}
@@ -345,7 +356,7 @@ const AppSidebar: React.FC = () => {
 
   return (
     <aside
-      className={`fixed mt-16 flex flex-col lg:mt-0 top-0 px-5 left-0 bg-white dark:bg-gray-900 dark:border-gray-800 text-gray-900 h-screen transition-all duration-300 ease-in-out z-50 border-r border-gray-200
+      className={`fixed mt-16 flex flex-col lg:mt-0 top-0 px-5 left-0 bg-indigo-700 dark:bg-indigo-900 text-white h-screen transition-all duration-300 ease-in-out z-50 border-r border-indigo-600/40 dark:border-indigo-950
         ${
           isExpanded || isMobileOpen
             ? "w-[290px]"
@@ -359,45 +370,27 @@ const AppSidebar: React.FC = () => {
       onMouseLeave={() => setIsHovered(false)}
       aria-label="Main navigation"
     >
-      {/* Logo */}
+      {/* Logo / header */}
       <div
-        className={`py-8 flex ${
-          !showText ? "lg:justify-center" : "justify-start"
+        className={`flex items-center py-8 ${
+          !showText ? "lg:justify-center" : "gap-3"
         }`}
       >
-        <Link to="/" aria-label="Go to dashboard">
-          {showText ? (
-            <>
-              <img
-                className="dark:hidden"
-                src="/images/logo/logo.svg"
-                alt="PocketHealth"
-                width={150}
-                height={40}
-              />
-              <img
-                className="hidden dark:block"
-                src="/images/logo/logo-dark.svg"
-                alt="PocketHealth"
-                width={150}
-                height={40}
-              />
-            </>
-          ) : (
-            <img
-              src="/images/logo/logo-icon.svg"
-              alt="PocketHealth"
-              width={32}
-              height={32}
-            />
+        <Link to="/" aria-label="Go to dashboard" className="flex items-center gap-3">
+          <img src="/images/logo/logo-icon.svg" alt="" width={36} height={36} className="shrink-0" />
+          {showText && (
+            <span className="text-lg font-semibold leading-tight text-white">
+              Pocket Health
+            </span>
           )}
         </Link>
       </div>
 
-      {/* Role badge */}
+      {/* Role indicator */}
       {showText && (
-        <div className="mb-4 px-1">
-          <RoleBadge role={role} />
+        <div className="mb-4 flex items-center gap-2 rounded-lg bg-white/10 px-3 py-2">
+          <span className={`size-2 rounded-full ${roleDot[role] ?? roleDot.patient}`} aria-hidden="true" />
+          <span className="text-sm font-medium text-white">{roleLabel[role] ?? "Patient"}</span>
         </div>
       )}
 
@@ -409,7 +402,7 @@ const AppSidebar: React.FC = () => {
             {/* Main / Core section */}
             <div>
               <h2
-                className={`mb-4 text-xs uppercase flex leading-[20px] text-gray-400 ${
+                className={`mb-4 text-xs uppercase flex leading-[20px] text-indigo-200/70 ${
                   !showText ? "lg:justify-center" : "justify-start"
                 }`}
               >
@@ -421,7 +414,7 @@ const AppSidebar: React.FC = () => {
             {/* Secondary section */}
             <div>
               <h2
-                className={`mb-4 text-xs uppercase flex leading-[20px] text-gray-400 ${
+                className={`mb-4 text-xs uppercase flex leading-[20px] text-indigo-200/70 ${
                   !showText ? "lg:justify-center" : "justify-start"
                 }`}
               >

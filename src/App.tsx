@@ -9,6 +9,20 @@ import NotFound from "./pages/OtherPage/NotFound";
 import Home from "./pages/Dashboard/Home";
 import UserProfiles from "./pages/UserProfiles";
 import ComingSoon from "./pages/PocketHealth/ComingSoon";
+import Providers from "./pages/PocketHealth/Providers";
+import ProviderDetail from "./pages/PocketHealth/ProviderDetail";
+import Consultations from "./pages/PocketHealth/Consultations";
+import Appointments from "./pages/PocketHealth/Appointments";
+import Schedule from "./pages/PocketHealth/Schedule";
+import WalletPage from "./pages/PocketHealth/Wallet";
+import HealthInfoPage from "./pages/PocketHealth/HealthInfo";
+import Documents from "./pages/PocketHealth/Documents";
+import Reviews from "./pages/PocketHealth/Reviews";
+import ConsultationRoom from "./pages/PocketHealth/ConsultationRoom";
+import MedicalRequests from "./pages/PocketHealth/MedicalRequests";
+import InsurancePage from "./pages/PocketHealth/Insurance";
+import EmergencyContacts from "./pages/PocketHealth/EmergencyContacts";
+import Notifications from "./pages/PocketHealth/Notifications";
 
 function PrivateRoute({ children }: { children: React.ReactNode }) {
   const { isAuthenticated } = useAuthStore();
@@ -30,67 +44,57 @@ export default function App() {
 
             <Route path="/profile" element={<UserProfiles />} />
 
-            <Route path="/consultations" element={
-              <ComingSoon title="Consultations" icon="🩺"
-                description="Video, audio and chat consultations." />
-            }/>
+            <Route path="/consultations" element={<Consultations />}/>
 
-            <Route path="/appointments" element={
-              <ComingSoon title="Appointments" icon="📅"
-                description="Book and manage in-person or virtual appointments." />
-            }/>
+            <Route path="/consultations/:id" element={<ConsultationRoom />}/>
 
-            <Route path="/documents" element={
-              <ComingSoon title="Documents" icon="📄"
-                description="Medical documents, lab results, prescriptions and scans." />
-            }/>
+            <Route path="/appointments" element={<Appointments />}/>
 
-            <Route path="/notifications" element={
-              <ComingSoon title="Notifications" icon="🔔"
-                description="Your alerts, reminders and payment confirmations." />
-            }/>
+            <Route path="/documents" element={<Documents />}/>
+
+            <Route path="/notifications" element={<Notifications />}/>
 
             {/* ── Patient + Admin ────────────────────────────── */}
             <Route path="/providers" element={
               <RoleGuard allowedRoles={["patient","admin"]}>
-                <ComingSoon title="Find Providers" icon="👨‍⚕️"
-                  description="Browse and book verified healthcare providers near you." />
+                <Providers />
+              </RoleGuard>
+            }/>
+
+            <Route path="/providers/:id" element={
+              <RoleGuard allowedRoles={["patient","admin"]}>
+                <ProviderDetail />
               </RoleGuard>
             }/>
 
             <Route path="/wallet" element={
               <RoleGuard allowedRoles={["patient","admin"]}>
-                <ComingSoon title="My Wallet" icon="💰"
-                  description="Top up via M-Pesa, view balance and transaction history." />
+                <WalletPage />
               </RoleGuard>
             }/>
 
             <Route path="/health-info" element={
               <RoleGuard allowedRoles={["patient","admin"]}>
-                <ComingSoon title="Health Info" icon="❤️"
-                  description="Blood group, allergies, chronic conditions and medications." />
+                <HealthInfoPage />
               </RoleGuard>
             }/>
 
             <Route path="/insurance" element={
               <RoleGuard allowedRoles={["patient","admin"]}>
-                <ComingSoon title="Insurance" icon="🛡️"
-                  description="Manage NHIF, Jubilee, AAR and other cover details." />
+                <InsurancePage />
               </RoleGuard>
             }/>
 
             <Route path="/emergency" element={
               <RoleGuard allowedRoles={["patient","admin"]}>
-                <ComingSoon title="Emergency Contacts" icon="🚨"
-                  description="Emergency contacts ordered by priority." />
+                <EmergencyContacts />
               </RoleGuard>
             }/>
 
             {/* ── Provider + Admin ───────────────────────────── */}
             <Route path="/schedule" element={
               <RoleGuard allowedRoles={["provider","admin"]}>
-                <ComingSoon title="My Schedule" icon="🗓️"
-                  description="Manage availability, time slots and upcoming appointments." />
+                <Schedule />
               </RoleGuard>
             }/>
 
@@ -103,15 +107,13 @@ export default function App() {
 
             <Route path="/medical-requests" element={
               <RoleGuard allowedRoles={["provider","admin"]}>
-                <ComingSoon title="Medical Requests" icon="💊"
-                  description="Create prescriptions, referrals and lab orders." />
+                <MedicalRequests />
               </RoleGuard>
             }/>
 
             <Route path="/reviews" element={
               <RoleGuard allowedRoles={["provider","admin"]}>
-                <ComingSoon title="Reviews" icon="⭐"
-                  description="Patient ratings across quality, helpfulness, timeliness and care." />
+                <Reviews />
               </RoleGuard>
             }/>
 
