@@ -24,6 +24,17 @@ export interface Provider {
   rates: number | null;
 }
 
+export interface NextOfKin {
+  nextOfKinId: string;
+  profileId: string;
+  fullName: string;
+  relationship: string;
+  phone1: string;
+  phone2?: string;
+  emergencyType?: string;
+  priority: number;
+}
+
 export interface ProviderAvailability {
   availabilityId: string;
   provider?: Provider;
