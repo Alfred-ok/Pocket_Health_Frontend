@@ -173,3 +173,15 @@ export interface EmergencyContact {
   priority: number;
   emergencyType: string | null;
 }
+
+export interface EmergencyAlert {
+  alertId: string;
+  profile?: Profile;
+  alertType: "health" | "life_in_danger" | string;
+  status: "active" | "resolved" | string;
+  notes: string | null;
+  location: string | null;
+  recordingDocument?: Document | null;
+  createdAt: string;
+  resolvedAt: string | null;
+}

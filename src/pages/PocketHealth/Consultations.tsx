@@ -8,7 +8,7 @@ import NewConsultationModal from "../../components/PocketHealth/NewConsultationM
 import LeaveReviewModal from "../../components/PocketHealth/LeaveReviewModal";
 import { useModal } from "../../hooks/useModal";
 import { useAuthStore } from "../../store/authStore";
-import { useMyProfile } from "../../hooks/useMyProfile";
+import { useActiveProfile } from "../../hooks/useActiveProfile";
 import { useMyProvider } from "../../hooks/useMyProvider";
 import consultationsApi from "../../api/consultationsApi";
 import { VideoIcon, AudioIcon, ChatIcon, PlusIcon } from "../../icons";
@@ -36,7 +36,7 @@ function patientName(c: Consultation) {
 export default function Consultations() {
   const { user } = useAuthStore();
   const role = user?.userCategory ?? "patient";
-  const { profile } = useMyProfile();
+  const { activeProfile: profile } = useActiveProfile();
   const { provider } = useMyProvider();
   const newConsultationModal = useModal();
   const reviewModal = useModal();

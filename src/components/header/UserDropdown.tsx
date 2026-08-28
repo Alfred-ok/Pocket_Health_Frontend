@@ -2,9 +2,18 @@ import { useState } from "react";
 import { DropdownItem } from "../ui/dropdown/DropdownItem";
 import { Dropdown } from "../ui/dropdown/Dropdown";
 import { Link } from "react-router";
+import { useAuthStore } from "../../store/authStore";
+import { useActiveProfile } from "../../hooks/useActiveProfile";
+import ProfileSwitcher from "./ProfileSwitcher";
 
 export default function UserDropdown() {
   const [isOpen, setIsOpen] = useState(false);
+  const { user } = useAuthStore();
+  const { activeProfile } = useActiveProfile();
+
+  const activeProfileName = activeProfile
+    ? [activeProfile.otherNames, activeProfile.surname].filter(Boolean).join(" ") || activeProfile.surname
+    : null;
 
   function toggleDropdown() {
     setIsOpen(!isOpen);
@@ -23,7 +32,9 @@ export default function UserDropdown() {
           <img src="/images/user/owner.jpg" alt="User" />
         </span>
 
-        <span className="block mr-1 font-medium text-theme-sm">Musharof</span>
+        <span className="block mr-1 font-medium text-theme-sm">
+          {activeProfileName ?? user?.email ?? "Account"}
+        </span>
         <svg
           className={`stroke-indigo-100 transition-transform duration-200 ${
             isOpen ? "rotate-180" : ""
@@ -51,12 +62,14 @@ export default function UserDropdown() {
       >
         <div>
           <span className="block font-medium text-gray-700 text-theme-sm dark:text-gray-400">
-            Musharof Chowdhury
+            {activeProfileName ?? "Your profile"}
           </span>
           <span className="mt-0.5 block text-theme-xs text-gray-500 dark:text-gray-400">
-            randomuser@pimjo.com
+            {user?.email}
           </span>
         </div>
+
+        <ProfileSwitcher onSwitch={closeDropdown} />
 
         <ul className="flex flex-col gap-1 pt-4 pb-3 border-b border-gray-200 dark:border-gray-800">
           <li>

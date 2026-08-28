@@ -1,5 +1,7 @@
 import { create } from "zustand";
 import { persist } from "zustand/middleware";
+import { useActiveProfileStore } from "./activeProfileStore";
+import { useProfilesStore } from "./profilesStore";
 
 export interface AuthUser {
   userId: string;
@@ -30,6 +32,8 @@ export const useAuthStore = create<AuthState>()(
 
       logout: () => {
         localStorage.removeItem("ph_access_token");
+        useActiveProfileStore.getState().setActiveProfileId(null);
+        useProfilesStore.getState().reset();
         set({ user: null, token: null, isAuthenticated: false });
       },
     }),

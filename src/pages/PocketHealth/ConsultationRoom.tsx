@@ -8,7 +8,7 @@ import MedicalRequestPanel from "../../components/PocketHealth/MedicalRequestPan
 import LeaveReviewModal from "../../components/PocketHealth/LeaveReviewModal";
 import { useModal } from "../../hooks/useModal";
 import { useAuthStore } from "../../store/authStore";
-import { useMyProfile } from "../../hooks/useMyProfile";
+import { useActiveProfile } from "../../hooks/useActiveProfile";
 import consultationsApi from "../../api/consultationsApi";
 import { VideoIcon, AudioIcon, ChatIcon } from "../../icons";
 import type { Consultation } from "../../types/pocketHealth";
@@ -33,7 +33,7 @@ function patientName(c: Consultation) {
 export default function ConsultationRoom() {
   const { id } = useParams<{ id: string }>();
   const { user } = useAuthStore();
-  const { profile } = useMyProfile();
+  const { activeProfile: profile } = useActiveProfile();
   const role = user?.userCategory ?? "patient";
   const reviewModal = useModal();
 

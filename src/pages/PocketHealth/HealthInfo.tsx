@@ -4,7 +4,7 @@ import PageBreadcrumb from "../../components/common/PageBreadCrumb";
 import Button from "../../components/ui/button/Button";
 import { Modal } from "../../components/ui/modal";
 import { useModal } from "../../hooks/useModal";
-import { useMyProfile } from "../../hooks/useMyProfile";
+import { useActiveProfile } from "../../hooks/useActiveProfile";
 import Label from "../../components/form/Label";
 import Input from "../../components/form/input/InputField";
 import TextArea from "../../components/form/input/TextArea";
@@ -35,7 +35,7 @@ function toFormState(info: HealthInfo | null): HealthInfoBody {
 }
 
 export default function HealthInfoPage() {
-  const { profile, loading: profileLoading } = useMyProfile();
+  const { activeProfile: profile, loading: profileLoading } = useActiveProfile();
   const { isOpen, openModal, closeModal } = useModal();
 
   const [info, setInfo] = useState<HealthInfo | null>(null);

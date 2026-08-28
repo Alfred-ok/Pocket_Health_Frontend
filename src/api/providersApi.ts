@@ -30,6 +30,11 @@ const providersApi = {
     return res.data.data;
   },
 
+  getCategories: async () => {
+    const res = await api.get<ApiResponse<string[]>>("/providers/categories");
+    return res.data.data;
+  },
+
   update: async (id: string, body: Record<string, unknown>) => {
     const res = await api.patch<ApiResponse<Provider>>(`/providers/${id}`, body);
     return res.data.data;

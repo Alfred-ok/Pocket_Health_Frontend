@@ -6,12 +6,20 @@ import NotificationDropdown from "../components/header/NotificationDropdown";
 import UserDropdown from "../components/header/UserDropdown";
 import { useAuthStore } from "../store/authStore";
 import RoleBadge from "../components/common/RoleBadge";
+import Badge from "../components/ui/badge/Badge";
+import { useActiveProfile } from "../hooks/useActiveProfile";
 
 const AppHeader: React.FC = () => {
   const [isApplicationMenuOpen, setApplicationMenuOpen] = useState(false);
   const { isMobileOpen, toggleSidebar, toggleMobileSidebar } = useSidebar();
   const { user } = useAuthStore();
+  const { activeProfile } = useActiveProfile();
   const inputRef = useRef<HTMLInputElement>(null);
+
+  const activeProfileName = activeProfile
+    ? [activeProfile.otherNames, activeProfile.surname].filter(Boolean).join(" ") || activeProfile.surname
+    : null;
+  const showViewingChip = Boolean(activeProfile && !activeProfile.isPrimary && activeProfileName);
 
   const handleToggle = () => {
     if (window.innerWidth >= 1024) toggleSidebar();
@@ -146,6 +154,12 @@ const AppHeader: React.FC = () => {
           {/* Role badge — HCI: always-visible system status */}
           {user && (
             <RoleBadge role={user.userCategory} />
+          )}
+
+          {showViewingChip && (
+            <Badge size="sm" color="info">
+              Viewing: {activeProfileName} ({activeProfile?.relation ?? "Dependant"})
+            </Badge>
           )}
 
           <UserDropdown />

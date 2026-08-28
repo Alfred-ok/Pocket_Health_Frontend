@@ -5,7 +5,7 @@ import Button from "../../components/ui/button/Button";
 import Badge from "../../components/ui/badge/Badge";
 import UploadDocumentModal from "../../components/PocketHealth/UploadDocumentModal";
 import { useModal } from "../../hooks/useModal";
-import { useMyProfile } from "../../hooks/useMyProfile";
+import { useActiveProfile } from "../../hooks/useActiveProfile";
 import documentsApi from "../../api/documentsApi";
 import { FileIcon, PlusIcon, TrashBinIcon } from "../../icons";
 import type { Document } from "../../types/pocketHealth";
@@ -19,7 +19,7 @@ const docTypeLabels: Record<string, string> = {
 };
 
 export default function Documents() {
-  const { profile, loading: profileLoading } = useMyProfile();
+  const { activeProfile: profile, loading: profileLoading } = useActiveProfile();
   const uploadModal = useModal();
 
   const [documents, setDocuments] = useState<Document[]>([]);

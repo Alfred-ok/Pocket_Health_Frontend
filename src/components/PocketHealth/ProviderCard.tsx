@@ -1,25 +1,8 @@
 import { Link } from "react-router";
 import { DollarLineIcon, ShootingStarIcon, TimeIcon } from "../../icons";
-import Badge, { BadgeColor } from "../ui/badge/Badge";
+import Badge from "../ui/badge/Badge";
+import { categoryLabels, categoryColors } from "../../constants/providerCategories";
 import type { Provider } from "../../types/pocketHealth";
-
-const categoryLabels: Record<string, string> = {
-  doctor: "Doctor",
-  nurse: "Nurse",
-  hospital: "Hospital",
-  pharmacy: "Pharmacy",
-  lab: "Lab",
-  specialist: "Specialist",
-};
-
-const categoryColors: Record<string, BadgeColor> = {
-  doctor: "primary",
-  nurse: "info",
-  hospital: "success",
-  pharmacy: "warning",
-  lab: "error",
-  specialist: "dark",
-};
 
 const FALLBACK_AVATAR = "/images/ClinicsAvatar.jpg";
 

@@ -1,18 +1,18 @@
 import { useEffect, useState } from "react";
-import PageMeta from "../../components/common/PageMeta";
-import PageBreadcrumb from "../../components/common/PageBreadCrumb";
-import Badge from "../../components/ui/badge/Badge";
-import Button from "../../components/ui/button/Button";
-import { Modal } from "../../components/ui/modal";
-import { useModal } from "../../hooks/useModal";
-import { useMyProfile } from "../../hooks/useMyProfile";
-import Label from "../../components/form/Label";
-import Input from "../../components/form/input/InputField";
-import Select from "../../components/form/Select";
-import emergencyContactsApi, { EmergencyContactBody } from "../../api/emergencyContactsApi";
-import { PlusIcon, TrashBinIcon, PencilIcon } from "../../icons";
-import type { EmergencyContact } from "../../types/pocketHealth";
+import Badge from "../../ui/badge/Badge";
+import Button from "../../ui/button/Button";
+import { Modal } from "../../ui/modal";
+import { useModal } from "../../../hooks/useModal";
+import { useActiveProfile } from "../../../hooks/useActiveProfile";
+import Label from "../../form/Label";
+import Input from "../../form/input/InputField";
+import Select from "../../form/Select";
+import emergencyContactsApi, { EmergencyContactBody } from "../../../api/emergencyContactsApi";
+import nextOfKinApi from "../../../api/nextOfKinApi";
+import { PlusIcon, TrashBinIcon, PencilIcon } from "../../../icons";
+import type { EmergencyContact, NextOfKin } from "../../../types/pocketHealth";
 
+const MAX_CONTACTS = 3;
 const emptyForm: EmergencyContactBody = { name: "", phone1: "", phone2: "", priority: 1, emergencyType: "family" };
 
 const priorityOptions = [1, 2, 3, 4, 5].map((n) => ({ value: String(n), label: `Priority ${n}` }));
@@ -21,11 +21,12 @@ const typeOptions = ["family", "friend", "doctor", "neighbor", "other"].map((t) 
   label: t.charAt(0).toUpperCase() + t.slice(1),
 }));
 
-export default function EmergencyContacts() {
-  const { profile, loading: profileLoading } = useMyProfile();
+export default function ContactsTab() {
+  const { activeProfile: profile, loading: profileLoading } = useActiveProfile();
   const { isOpen, openModal, closeModal } = useModal();
 
   const [contacts, setContacts] = useState<EmergencyContact[]>([]);
+  const [nextOfKin, setNextOfKin] = useState<NextOfKin | null>(null);
   const [loading, setLoading] = useState(true);
   const [editing, setEditing] = useState<EmergencyContact | null>(null);
   const [form, setForm] = useState<EmergencyContactBody>(emptyForm);
@@ -38,10 +39,14 @@ export default function EmergencyContacts() {
       return;
     }
     setLoading(true);
-    emergencyContactsApi
-      .getByProfile(profile.profileId)
-      .then((list) => list.sort((a, b) => a.priority - b.priority))
-      .then(setContacts)
+    Promise.all([
+      emergencyContactsApi.getByProfile(profile.profileId).then((list) => list.sort((a, b) => a.priority - b.priority)),
+      nextOfKinApi.getByProfile(profile.profileId),
+    ])
+      .then(([contactList, kinList]) => {
+        setContacts(contactList);
+        setNextOfKin(kinList[0] ?? null);
+      })
       .finally(() => setLoading(false));
   };
 
@@ -67,6 +72,17 @@ export default function EmergencyContacts() {
     openModal();
   };
 
+  const handleUseNextOfKin = () => {
+    if (!nextOfKin) return;
+    setForm({
+      ...form,
+      name: nextOfKin.fullName,
+      phone1: nextOfKin.phone1,
+      phone2: nextOfKin.phone2 ?? "",
+      emergencyType: "family",
+    });
+  };
+
   const handleSave = async () => {
     if (!profile || !form.name || !form.phone1) {
       setError("Name and phone number are required.");
@@ -83,7 +99,7 @@ export default function EmergencyContacts() {
       load();
       closeModal();
     } catch {
-      setError("Failed to save contact.");
+      setError("Failed to save contact. You may already have the maximum of 3 emergency contacts.");
     } finally {
       setSaving(false);
     }
@@ -94,13 +110,15 @@ export default function EmergencyContacts() {
     load();
   };
 
+  const atMax = contacts.length >= MAX_CONTACTS;
+
   return (
     <>
-      <PageMeta title="Emergency Contacts | PocketHealth" description="Emergency contacts ordered by priority." />
-      <PageBreadcrumb pageTitle="Emergency Contacts" />
-
-      <div className="mb-5 flex justify-end">
-        {profile && (
+      <div className="mb-5 flex items-center justify-between gap-3">
+        <p className="text-sm text-gray-500 dark:text-gray-400">
+          {contacts.length}/{MAX_CONTACTS} contacts &middot; keep 2-3 people who can be reached in an emergency.
+        </p>
+        {profile && !atMax && (
           <Button size="sm" startIcon={<PlusIcon className="size-4" />} onClick={handleOpenAdd}>
             Add contact
           </Button>
@@ -150,9 +168,19 @@ export default function EmergencyContacts() {
       </div>
 
       <Modal isOpen={isOpen} onClose={closeModal} className="max-w-md p-6">
-        <h4 className="mb-5 text-lg font-semibold text-gray-800 dark:text-white/90">
+        <h4 className="mb-2 text-lg font-semibold text-gray-800 dark:text-white/90">
           {editing ? "Edit contact" : "Add emergency contact"}
         </h4>
+
+        {!editing && nextOfKin && (
+          <button
+            type="button"
+            onClick={handleUseNextOfKin}
+            className="mb-4 rounded-lg border border-brand-200 bg-brand-50 px-3 py-2 text-left text-sm text-brand-600 hover:bg-brand-100 dark:border-brand-800 dark:bg-brand-500/10 dark:text-brand-400"
+          >
+            Use my Next of Kin ({nextOfKin.fullName}) as this contact
+          </button>
+        )}
 
         <div className="space-y-4">
           <div>

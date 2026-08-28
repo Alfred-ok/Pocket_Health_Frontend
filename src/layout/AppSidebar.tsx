@@ -1,6 +1,7 @@
 import { useCallback, useEffect, useRef, useState } from "react";
 import { Link, useLocation } from "react-router";
 import {
+  AlertIcon,
   BoxCubeIcon,
   CalenderIcon,
   ChevronDownIcon,
@@ -11,6 +12,7 @@ import {
   PieChartIcon,
   PlugInIcon,
   TableIcon,
+  TaskIcon,
   UserCircleIcon,
 } from "../icons";
 import { useSidebar } from "../context/SidebarContext";
@@ -42,9 +44,11 @@ type NavItem = {
 const patientNavItems: NavItem[] = [
   { icon: <GridIcon />,        name: "Dashboard",       path: "/"             },
   { icon: <UserCircleIcon />,  name: "Find Providers",  path: "/providers"    },
+  { icon: <TaskIcon />,        name: "Symptom Checker", path: "/symptom-checker" },
   { icon: <CalenderIcon />,    name: "Consultations",   path: "/consultations"},
   { icon: <CalenderIcon />,    name: "Appointments",    path: "/appointments" },
   { icon: <PlugInIcon />,      name: "Wallet",          path: "/wallet"       },
+  { icon: <AlertIcon />,       name: "Emergency",       path: "/emergency"    },
 ];
 
 const patientOthersItems: NavItem[] = [
@@ -55,7 +59,6 @@ const patientOthersItems: NavItem[] = [
       { name: "My Profile",          path: "/profile"   },
       { name: "Health Info",         path: "/health-info"},
       { name: "Insurance",           path: "/insurance"  },
-      { name: "Emergency Contacts",  path: "/emergency"  },
     ],
   },
   {

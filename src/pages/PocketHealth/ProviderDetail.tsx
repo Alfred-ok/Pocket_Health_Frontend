@@ -8,10 +8,11 @@ import BookingModal from "../../components/PocketHealth/BookingModal";
 import ReviewList from "../../components/PocketHealth/ReviewList";
 import { useModal } from "../../hooks/useModal";
 import { useAuthStore } from "../../store/authStore";
-import { useMyProfile } from "../../hooks/useMyProfile";
+import { useActiveProfile } from "../../hooks/useActiveProfile";
 import providersApi from "../../api/providersApi";
 import reviewsApi from "../../api/reviewsApi";
 import consultationsApi from "../../api/consultationsApi";
+import { categoryLabels, feeLabel } from "../../constants/providerCategories";
 import { ShootingStarIcon, VideoIcon, AudioIcon, ChatIcon } from "../../icons";
 import type { Provider, Review } from "../../types/pocketHealth";
 import type { ProviderRating } from "../../api/reviewsApi";
@@ -26,7 +27,7 @@ export default function ProviderDetail() {
   const { id } = useParams<{ id: string }>();
   const navigate = useNavigate();
   const { user } = useAuthStore();
-  const { profile } = useMyProfile();
+  const { activeProfile: profile } = useActiveProfile();
   const bookingModal = useModal();
 
   const [provider, setProvider] = useState<Provider | null>(null);
@@ -88,7 +89,7 @@ export default function ProviderDetail() {
               )}
             </div>
             <p className="mt-1 text-sm text-gray-500 dark:text-gray-400">
-              {provider.specialty ?? provider.category}
+              {provider.specialty ?? (provider.category ? categoryLabels[provider.category] ?? provider.category : null)}
             </p>
             <p className="mt-1 text-sm text-gray-400 dark:text-gray-500">
               {[provider.location, provider.region].filter(Boolean).join(", ")}
@@ -103,7 +104,7 @@ export default function ProviderDetail() {
 
           {provider.rates != null && (
             <div className="text-right">
-              <p className="text-xs text-gray-400 dark:text-gray-500">Consultation fee</p>
+              <p className="text-xs text-gray-400 dark:text-gray-500">{feeLabel(provider.category)}</p>
               <p className="text-lg font-semibold text-gray-800 dark:text-white/90">
                 KES {Number(provider.rates).toLocaleString()}
               </p>

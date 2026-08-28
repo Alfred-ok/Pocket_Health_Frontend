@@ -8,7 +8,7 @@ import PageBreadcrumb from "../../components/common/PageBreadCrumb";
 import Badge from "../../components/ui/badge/Badge";
 import Button from "../../components/ui/button/Button";
 import { useAuthStore } from "../../store/authStore";
-import { useMyProfile } from "../../hooks/useMyProfile";
+import { useActiveProfile } from "../../hooks/useActiveProfile";
 import { useMyProvider } from "../../hooks/useMyProvider";
 import appointmentsApi from "../../api/appointmentsApi";
 import type { Appointment } from "../../types/pocketHealth";
@@ -35,7 +35,7 @@ function patientName(appointment: Appointment) {
 export default function Appointments() {
   const { user } = useAuthStore();
   const role = user?.userCategory ?? "patient";
-  const { profile } = useMyProfile();
+  const { activeProfile: profile } = useActiveProfile();
   const { provider } = useMyProvider();
 
   const [appointments, setAppointments] = useState<Appointment[]>([]);

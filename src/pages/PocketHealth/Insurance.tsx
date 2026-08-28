@@ -4,7 +4,7 @@ import PageBreadcrumb from "../../components/common/PageBreadCrumb";
 import Button from "../../components/ui/button/Button";
 import { Modal } from "../../components/ui/modal";
 import { useModal } from "../../hooks/useModal";
-import { useMyProfile } from "../../hooks/useMyProfile";
+import { useActiveProfile } from "../../hooks/useActiveProfile";
 import Label from "../../components/form/Label";
 import Input from "../../components/form/input/InputField";
 import insuranceApi, { InsuranceBody } from "../../api/insuranceApi";
@@ -14,7 +14,7 @@ import type { Insurance } from "../../types/pocketHealth";
 const emptyForm: InsuranceBody = { insurerName: "", policyNumber: "", phone1: "", phone2: "" };
 
 export default function InsurancePage() {
-  const { profile, loading: profileLoading } = useMyProfile();
+  const { activeProfile: profile, loading: profileLoading } = useActiveProfile();
   const { isOpen, openModal, closeModal } = useModal();
 
   const [policies, setPolicies] = useState<Insurance[]>([]);
