@@ -6,6 +6,7 @@ import ProviderCard from "../../components/PocketHealth/ProviderCard";
 import ProviderCategorySidebar from "../../components/PocketHealth/ProviderCategorySidebar";
 import providersApi from "../../api/providersApi";
 import reviewsApi from "../../api/reviewsApi";
+import { PROVIDER_TYPE_GROUPS } from "../../constants/providerCategories";
 import type { Provider } from "../../types/pocketHealth";
 
 const selectClasses =
@@ -17,22 +18,32 @@ export default function Providers() {
   const [specialties, setSpecialties] = useState<string[]>([]);
   const [regions, setRegions] = useState<string[]>([]);
   const [categoryCounts, setCategoryCounts] = useState<Record<string, number>>({});
-  const [totalCount, setTotalCount] = useState(0);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
 
   const [searchParams] = useSearchParams();
+  const initialCategory = searchParams.get("category") ?? "";
+  const initialTab =
+    PROVIDER_TYPE_GROUPS.find((g) => g.categories.includes(initialCategory))?.key ??
+    PROVIDER_TYPE_GROUPS[0].key;
 
   const [query, setQuery] = useState("");
   const [specialty, setSpecialty] = useState("");
   const [region, setRegion] = useState("");
-  const [category, setCategory] = useState(searchParams.get("category") ?? "");
+  const [category, setCategory] = useState(initialCategory);
+  const [activeTab, setActiveTab] = useState(initialTab);
+
+  const activeGroup = PROVIDER_TYPE_GROUPS.find((g) => g.key === activeTab) ?? PROVIDER_TYPE_GROUPS[0];
+
+  const handleTabChange = (tabKey: string) => {
+    setActiveTab(tabKey);
+    setCategory("");
+  };
 
   // Build filter option lists / category counts once from the full unfiltered directory.
   useEffect(() => {
     providersApi.search({}).then((all) => {
       setRegions(Array.from(new Set(all.map((p) => p.region).filter((r): r is string => !!r))).sort());
-      setTotalCount(all.length);
       const counts: Record<string, number> = {};
       all.forEach((p) => {
         if (!p.category) return;
@@ -56,9 +67,12 @@ export default function Providers() {
       })
       .then(async (results) => {
         if (cancelled) return;
-        setProviders(results);
+        // When no specific category is picked, restrict results to the active tab's group
+        // (the server only filters by a single exact category, not a group of them).
+        const scoped = category ? results : results.filter((p) => activeGroup.categories.includes(p.category ?? ""));
+        setProviders(scoped);
         const ratingEntries = await Promise.all(
-          results.map(async (p) => {
+          scoped.map(async (p) => {
             try {
               const r = await reviewsApi.getRating(p.providerId);
               return [p.providerId, r.averageRating] as const;
@@ -75,19 +89,51 @@ export default function Providers() {
     return () => {
       cancelled = true;
     };
-  }, [query, specialty, region, category]);
+  }, [query, specialty, region, category, activeTab]);
 
   return (
     <>
       <PageMeta title="Find Providers | PocketHealth" description="Browse and book verified healthcare providers." />
       <PageBreadcrumb pageTitle="Find Providers" />
 
+      <div className="mb-5 flex gap-6 border-b border-gray-200 dark:border-gray-800">
+        {PROVIDER_TYPE_GROUPS.map((group) => {
+          const groupCount = group.categories.reduce((sum, c) => sum + (categoryCounts[c] ?? 0), 0);
+          const isActive = activeTab === group.key;
+          return (
+            <button
+              key={group.key}
+              type="button"
+              onClick={() => handleTabChange(group.key)}
+              className={`-mb-px flex items-center gap-2 border-b-2 px-1 pb-3 text-sm font-medium transition-colors ${
+                isActive
+                  ? "border-brand-500 text-brand-500 dark:text-brand-400"
+                  : "border-transparent text-gray-500 hover:text-gray-700 dark:text-gray-400 dark:hover:text-gray-300"
+              }`}
+            >
+              {group.label}
+              <span
+                className={`rounded-full px-2 py-0.5 text-xs font-medium ${
+                  isActive
+                    ? "bg-brand-50 text-brand-500 dark:bg-brand-500/15 dark:text-brand-400"
+                    : "bg-gray-100 text-gray-500 dark:bg-white/10 dark:text-gray-400"
+                }`}
+              >
+                {groupCount}
+              </span>
+            </button>
+          );
+        })}
+      </div>
+
       <div className="flex flex-col gap-5 lg:flex-row lg:items-start">
         <ProviderCategorySidebar
           selected={category}
           onSelect={setCategory}
           counts={categoryCounts}
-          totalCount={totalCount}
+          totalCount={activeGroup.categories.reduce((sum, c) => sum + (categoryCounts[c] ?? 0), 0)}
+          categoryValues={activeGroup.categories}
+          allLabel={`All ${activeGroup.label}`}
         />
 
         <div className="min-w-0 flex-1">

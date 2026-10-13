@@ -16,6 +16,9 @@ interface ProviderCategorySidebarProps {
   onSelect: (value: string) => void;
   counts: Record<string, number>;
   totalCount: number;
+  /** Restrict the list to these category values (e.g. the active tab's group). Defaults to all categories. */
+  categoryValues?: string[];
+  allLabel?: string;
 }
 
 export default function ProviderCategorySidebar({
@@ -23,8 +26,14 @@ export default function ProviderCategorySidebar({
   onSelect,
   counts,
   totalCount,
+  categoryValues,
+  allLabel = "All categories",
 }: ProviderCategorySidebarProps) {
-  const rows = [{ value: "", label: "All categories", initial: "All" }, ...PROVIDER_CATEGORIES.map((c) => ({
+  const visibleCategories = categoryValues
+    ? PROVIDER_CATEGORIES.filter((c) => categoryValues.includes(c.value))
+    : PROVIDER_CATEGORIES;
+
+  const rows = [{ value: "", label: allLabel, initial: "All" }, ...visibleCategories.map((c) => ({
     value: c.value,
     label: c.label,
     initial: c.label.slice(0, 2).toUpperCase(),

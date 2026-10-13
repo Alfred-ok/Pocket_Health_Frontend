@@ -1,5 +1,6 @@
 import { Link } from "react-router";
 import { EMERGENCY_SERVICES } from "../../../constants/emergencyServices";
+import AlertInsurerButton from "./AlertInsurerButton";
 
 export default function ServicesTab() {
   return (
@@ -14,7 +15,9 @@ export default function ServicesTab() {
             <p className="mt-1 text-sm text-gray-500 dark:text-gray-400">{service.description}</p>
           </div>
 
-          {service.phone ? (
+          {service.action === "alert-insurer" ? (
+            <AlertInsurerButton />
+          ) : service.phone ? (
             <a
               href={`tel:${service.phone}`}
               className="mt-4 inline-flex items-center justify-center rounded-lg bg-error-500 px-4 py-2.5 text-sm font-medium text-white transition hover:bg-error-600"

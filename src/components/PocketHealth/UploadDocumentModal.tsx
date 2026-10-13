@@ -12,6 +12,8 @@ interface UploadDocumentModalProps {
   onClose: () => void;
   ownerProfileId: string;
   onUploaded?: () => void;
+  /** Pre-selected document type, e.g. "insurance" when opened from the Health Insurance module. */
+  defaultDocType?: string;
 }
 
 const docTypes = [
@@ -19,6 +21,7 @@ const docTypes = [
   { value: "lab_result", label: "Lab result" },
   { value: "scan", label: "Scan / Imaging" },
   { value: "referral", label: "Referral" },
+  { value: "insurance", label: "Insurance document" },
   { value: "other", label: "Other" },
 ];
 
@@ -29,10 +32,11 @@ const UploadDocumentModal: React.FC<UploadDocumentModalProps> = ({
   onClose,
   ownerProfileId,
   onUploaded,
+  defaultDocType = "other",
 }) => {
   const [fileName, setFileName] = useState("");
   const [fileUrl, setFileUrl] = useState<string | null>(null);
-  const [docType, setDocType] = useState("other");
+  const [docType, setDocType] = useState(defaultDocType);
   const [uploading, setUploading] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const [success, setSuccess] = useState(false);
@@ -57,7 +61,7 @@ const UploadDocumentModal: React.FC<UploadDocumentModalProps> = ({
   const handleClose = () => {
     setFileName("");
     setFileUrl(null);
-    setDocType("other");
+    setDocType(defaultDocType);
     setError(null);
     setSuccess(false);
     onClose();

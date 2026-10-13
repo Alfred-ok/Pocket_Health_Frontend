@@ -6,6 +6,7 @@ export interface EmergencyContactBody {
   name?: string;
   phone1?: string;
   phone2?: string;
+  email?: string;
   priority?: number;
   emergencyType?: string;
 }

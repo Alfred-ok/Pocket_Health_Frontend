@@ -9,11 +9,19 @@ import Input from "../../form/input/InputField";
 import Select from "../../form/Select";
 import emergencyContactsApi, { EmergencyContactBody } from "../../../api/emergencyContactsApi";
 import nextOfKinApi from "../../../api/nextOfKinApi";
+import { sortByPriority } from "../../../utils/emergencyContacts";
 import { PlusIcon, TrashBinIcon, PencilIcon } from "../../../icons";
 import type { EmergencyContact, NextOfKin } from "../../../types/pocketHealth";
 
 const MAX_CONTACTS = 3;
-const emptyForm: EmergencyContactBody = { name: "", phone1: "", phone2: "", priority: 1, emergencyType: "family" };
+const emptyForm: EmergencyContactBody = {
+  name: "",
+  phone1: "",
+  phone2: "",
+  email: "",
+  priority: 1,
+  emergencyType: "family",
+};
 
 const priorityOptions = [1, 2, 3, 4, 5].map((n) => ({ value: String(n), label: `Priority ${n}` }));
 const typeOptions = ["family", "friend", "doctor", "neighbor", "other"].map((t) => ({
@@ -40,7 +48,7 @@ export default function ContactsTab() {
     }
     setLoading(true);
     Promise.all([
-      emergencyContactsApi.getByProfile(profile.profileId).then((list) => list.sort((a, b) => a.priority - b.priority)),
+      emergencyContactsApi.getByProfile(profile.profileId).then(sortByPriority),
       nextOfKinApi.getByProfile(profile.profileId),
     ])
       .then(([contactList, kinList]) => {
@@ -65,6 +73,7 @@ export default function ContactsTab() {
       name: contact.name,
       phone1: contact.phone1,
       phone2: contact.phone2 ?? "",
+      email: contact.email ?? "",
       priority: contact.priority,
       emergencyType: contact.emergencyType ?? "family",
     });
@@ -110,13 +119,25 @@ export default function ContactsTab() {
     load();
   };
 
+  /** Moves a contact to priority 1 and pushes anyone else at priority 1 down, so it becomes the sole primary. */
+  const handleMakePrimary = async (contact: EmergencyContact) => {
+    await Promise.all([
+      emergencyContactsApi.update(contact.contactId, { priority: 1 }),
+      ...contacts
+        .filter((c) => c.contactId !== contact.contactId && c.priority <= 1)
+        .map((c) => emergencyContactsApi.update(c.contactId, { priority: 2 })),
+    ]);
+    load();
+  };
+
   const atMax = contacts.length >= MAX_CONTACTS;
 
   return (
     <>
       <div className="mb-5 flex items-center justify-between gap-3">
         <p className="text-sm text-gray-500 dark:text-gray-400">
-          {contacts.length}/{MAX_CONTACTS} contacts &middot; keep 2-3 people who can be reached in an emergency.
+          {contacts.length}/{MAX_CONTACTS} contacts &middot; keep 2-3 people who can be reached in an emergency. Your primary
+          contact receives the Health Emergency message.
         </p>
         {profile && !atMax && (
           <Button size="sm" startIcon={<PlusIcon className="size-4" />} onClick={handleOpenAdd}>
@@ -134,7 +155,7 @@ export default function ContactsTab() {
       )}
 
       <div className="space-y-3">
-        {contacts.map((contact) => (
+        {contacts.map((contact, index) => (
           <div
             key={contact.contactId}
             className="flex flex-wrap items-center justify-between gap-3 rounded-2xl border border-gray-200 bg-white p-4 dark:border-gray-800 dark:bg-white/[0.03]"
@@ -142,6 +163,11 @@ export default function ContactsTab() {
             <div>
               <div className="flex items-center gap-2">
                 <p className="text-sm font-medium text-gray-800 dark:text-white/90">{contact.name}</p>
+                {index === 0 && (
+                  <Badge color="success" size="sm">
+                    Primary
+                  </Badge>
+                )}
                 <Badge color="light" size="sm">
                   Priority {contact.priority}
                 </Badge>
@@ -152,10 +178,25 @@ export default function ContactsTab() {
                 )}
               </div>
               <p className="mt-1 text-xs text-gray-400 dark:text-gray-500">
-                {[contact.phone1, contact.phone2].filter(Boolean).join(" · ")}
+                {[contact.phone1, contact.phone2, contact.email].filter(Boolean).join(" · ")}
               </p>
+              {!contact.email && (
+                <p className="mt-1 text-xs text-warning-600 dark:text-warning-400">
+                  {index === 0
+                    ? "No email on file — add one so this primary contact can receive the Health Emergency message."
+                    : "No email on file — won't receive the automated SOS message."}
+                </p>
+              )}
             </div>
             <div className="flex items-center gap-3">
+              {index > 0 && (
+                <button
+                  onClick={() => handleMakePrimary(contact)}
+                  className="text-xs font-medium text-brand-500 hover:text-brand-600 dark:text-brand-400"
+                >
+                  Make primary
+                </button>
+              )}
               <button onClick={() => handleOpenEdit(contact)} className="text-gray-400 hover:text-brand-500">
                 <PencilIcon className="size-4" />
               </button>
@@ -194,6 +235,15 @@ export default function ContactsTab() {
           <div>
             <Label>Phone 2 (optional)</Label>
             <Input value={form.phone2} onChange={(e) => setForm({ ...form, phone2: e.target.value })} />
+          </div>
+          <div>
+            <Label>Email (optional)</Label>
+            <Input
+              type="email"
+              value={form.email}
+              onChange={(e) => setForm({ ...form, email: e.target.value })}
+              placeholder="Needed to receive the automated SOS message"
+            />
           </div>
           <div className="grid grid-cols-2 gap-4">
             <div>

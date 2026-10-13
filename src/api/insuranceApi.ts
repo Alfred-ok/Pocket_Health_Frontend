@@ -7,6 +7,7 @@ export interface InsuranceBody {
   policyNumber?: string;
   phone1?: string;
   phone2?: string;
+  email?: string;
 }
 
 const insuranceApi = {

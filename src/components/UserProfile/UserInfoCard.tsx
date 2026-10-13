@@ -20,7 +20,8 @@ function toFormState(profile: Profile | null): ProfileBody {
   return {
     surname: profile?.surname ?? "",
     otherNames: profile?.otherNames ?? "",
-    dateOfBirth: profile?.dateOfBirth ?? "",
+    // <input type="date"> only accepts "yyyy-MM-dd".
+    dateOfBirth: profile?.dateOfBirth?.slice(0, 10) ?? "",
     gender: profile?.gender ?? "",
     phone1: profile?.phone1 ?? "",
     residence: profile?.residence ?? "",
@@ -153,6 +154,7 @@ export default function UserInfoCard() {
                   <Label>Date of birth</Label>
                   <Input
                     type="date"
+                    max={new Date().toISOString().slice(0, 10)}
                     value={form.dateOfBirth}
                     onChange={(e) => setForm({ ...form, dateOfBirth: e.target.value })}
                   />

@@ -3,6 +3,7 @@ import { Outlet } from "react-router";
 import AppHeader from "./AppHeader";
 import Backdrop from "./Backdrop";
 import AppSidebar from "./AppSidebar";
+import PermissionPrimer from "../components/PocketHealth/emergency/PermissionPrimer";
 
 const LayoutContent: React.FC = () => {
   const { isExpanded, isHovered, isMobileOpen } = useSidebar();
@@ -19,6 +20,7 @@ const LayoutContent: React.FC = () => {
       >
         <AppHeader />
         <div className="p-4 mx-auto bg-indigo-50 dark:bg-indigo-950 max-w-(--breakpoint-2xl) md:p-6">
+          <PermissionPrimer />
           <Outlet />
         </div>
       </div>

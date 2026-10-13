@@ -11,7 +11,7 @@ import insuranceApi, { InsuranceBody } from "../../api/insuranceApi";
 import { PlusIcon, TrashBinIcon, PencilIcon } from "../../icons";
 import type { Insurance } from "../../types/pocketHealth";
 
-const emptyForm: InsuranceBody = { insurerName: "", policyNumber: "", phone1: "", phone2: "" };
+const emptyForm: InsuranceBody = { insurerName: "", policyNumber: "", phone1: "", phone2: "", email: "" };
 
 export default function InsurancePage() {
   const { activeProfile: profile, loading: profileLoading } = useActiveProfile();
@@ -49,6 +49,7 @@ export default function InsurancePage() {
       policyNumber: policy.policyNumber ?? "",
       phone1: policy.phone1 ?? "",
       phone2: policy.phone2 ?? "",
+      email: policy.email ?? "",
     });
     setError(null);
     openModal();
@@ -124,9 +125,9 @@ export default function InsurancePage() {
                 </button>
               </div>
             </div>
-            {(policy.phone1 || policy.phone2) && (
+            {(policy.phone1 || policy.phone2 || policy.email) && (
               <p className="mt-3 text-xs text-gray-400 dark:text-gray-500">
-                {[policy.phone1, policy.phone2].filter(Boolean).join(" · ")}
+                {[policy.phone1, policy.phone2, policy.email].filter(Boolean).join(" · ")}
               </p>
             )}
           </div>
@@ -161,6 +162,15 @@ export default function InsurancePage() {
           <div>
             <Label>Phone 2 (optional)</Label>
             <Input value={form.phone2} onChange={(e) => setForm({ ...form, phone2: e.target.value })} />
+          </div>
+          <div>
+            <Label>Email (optional)</Label>
+            <Input
+              type="email"
+              value={form.email}
+              onChange={(e) => setForm({ ...form, email: e.target.value })}
+              placeholder="Needed to alert the insurer directly in an emergency"
+            />
           </div>
         </div>
 

@@ -21,8 +21,8 @@ import Reviews from "./pages/PocketHealth/Reviews";
 import ConsultationRoom from "./pages/PocketHealth/ConsultationRoom";
 import MedicalRequests from "./pages/PocketHealth/MedicalRequests";
 import InsurancePage from "./pages/PocketHealth/Insurance";
+import HealthModulePage from "./pages/PocketHealth/HealthModule";
 import Emergency from "./pages/PocketHealth/Emergency";
-import SymptomChecker from "./pages/PocketHealth/SymptomChecker";
 import Notifications from "./pages/PocketHealth/Notifications";
 
 function PrivateRoute({ children }: { children: React.ReactNode }) {
@@ -86,17 +86,23 @@ export default function App() {
               </RoleGuard>
             }/>
 
+            <Route path="/health-library/:moduleKey" element={
+              <RoleGuard allowedRoles={["patient","admin"]}>
+                <HealthModulePage />
+              </RoleGuard>
+            }/>
+
             <Route path="/emergency" element={
               <RoleGuard allowedRoles={["patient","admin"]}>
                 <Emergency />
               </RoleGuard>
             }/>
 
-            <Route path="/symptom-checker" element={
-              <RoleGuard allowedRoles={["patient","admin"]}>
-                <SymptomChecker />
-              </RoleGuard>
-            }/>
+            {/* The Symptom Checker now lives inside the Adult Unwell module; keep old links working. */}
+            <Route
+              path="/symptom-checker"
+              element={<Navigate to="/health-library/adult_unwell?section=symptom-checker" replace />}
+            />
 
             {/* ── Provider + Admin ───────────────────────────── */}
             <Route path="/schedule" element={

@@ -3,6 +3,8 @@ export interface EmergencyService {
   description: string;
   phone?: string;
   link?: string;
+  /** "alert-insurer" renders a "Call My Insurance" button that dials the person's own insurer. */
+  action?: "alert-insurer";
 }
 
 export const EMERGENCY_SERVICES: EmergencyService[] = [
@@ -43,7 +45,7 @@ export const EMERGENCY_SERVICES: EmergencyService[] = [
   },
   {
     name: "Health Insurer",
-    description: "Find a licensed health insurer near you",
-    link: "/providers?category=insurer",
+    description: "Call the insurer on your policy directly",
+    action: "alert-insurer",
   },
 ];

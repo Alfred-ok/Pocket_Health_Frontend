@@ -5,6 +5,7 @@ import {
   BoxCubeIcon,
   CalenderIcon,
   ChevronDownIcon,
+  DocsIcon,
   GridIcon,
   HorizontaLDots,
   ListIcon,
@@ -44,7 +45,7 @@ type NavItem = {
 const patientNavItems: NavItem[] = [
   { icon: <GridIcon />,        name: "Dashboard",       path: "/"             },
   { icon: <UserCircleIcon />,  name: "Find Providers",  path: "/providers"    },
-  { icon: <TaskIcon />,        name: "Symptom Checker", path: "/symptom-checker" },
+  { icon: <TaskIcon />,        name: "Adult Unwell",    path: "/health-library/adult_unwell" },
   { icon: <CalenderIcon />,    name: "Consultations",   path: "/consultations"},
   { icon: <CalenderIcon />,    name: "Appointments",    path: "/appointments" },
   { icon: <PlugInIcon />,      name: "Wallet",          path: "/wallet"       },
@@ -67,6 +68,18 @@ const patientOthersItems: NavItem[] = [
     subItems: [
       { name: "Documents",     path: "/documents"    },
       { name: "Notifications", path: "/notifications"},
+    ],
+  },
+  {
+    icon: <DocsIcon />,
+    name: "Health Library",
+    subItems: [
+      { name: "Wellness",                     path: "/health-library/wellness"                   },
+      { name: "Mental Health",                path: "/health-library/mental_health"               },
+      { name: "First Aid",                    path: "/health-library/first_aid"                   },
+      { name: "Child Health & Immunisation",  path: "/health-library/child_immunisation"          },
+      { name: "Pregnancy & Lactation",        path: "/health-library/pregnancy_lactation"         },
+      { name: "Health Insurance",             path: "/health-library/health_insurance_education"  },
     ],
   },
 ];
@@ -143,6 +156,19 @@ const adminOthersItems: NavItem[] = [
     name: "System",
     subItems: [
       { name: "Notifications", path: "/notifications"},
+    ],
+  },
+  {
+    icon: <DocsIcon />,
+    name: "Health Library",
+    subItems: [
+      { name: "Adult Unwell",                 path: "/health-library/adult_unwell"                },
+      { name: "Wellness",                     path: "/health-library/wellness"                   },
+      { name: "Mental Health",                path: "/health-library/mental_health"               },
+      { name: "First Aid",                    path: "/health-library/first_aid"                   },
+      { name: "Child Health & Immunisation",  path: "/health-library/child_immunisation"          },
+      { name: "Pregnancy & Lactation",        path: "/health-library/pregnancy_lactation"         },
+      { name: "Health Insurance",             path: "/health-library/health_insurance_education"  },
     ],
   },
 ];

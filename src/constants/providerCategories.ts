@@ -24,6 +24,30 @@ export const categoryColors: Record<string, BadgeColor> = {
   insurer: "light",
 };
 
+export interface ProviderTypeGroup {
+  key: string;
+  label: string;
+  description: string;
+  categories: string[];
+}
+
+// Splits the provider directory into individual practitioners vs. institutions,
+// so "Find Providers" can show each in its own tab.
+export const PROVIDER_TYPE_GROUPS: ProviderTypeGroup[] = [
+  {
+    key: "practitioner",
+    label: "Doctors & Practitioners",
+    description: "Individual doctors, nurses and specialists you can book directly.",
+    categories: ["doctor", "nurse", "specialist"],
+  },
+  {
+    key: "facility",
+    label: "Health Facilities",
+    description: "Hospitals, pharmacies, labs and other institutions.",
+    categories: ["hospital", "pharmacy", "lab", "insurer"],
+  },
+];
+
 const feeLabels: Record<string, string> = {
   doctor: "Consultation fee",
   nurse: "Consultation fee",

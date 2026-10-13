@@ -15,6 +15,7 @@ const docTypeLabels: Record<string, string> = {
   lab_result: "Lab result",
   scan: "Scan / Imaging",
   referral: "Referral",
+  insurance: "Insurance",
   other: "Other",
 };
 

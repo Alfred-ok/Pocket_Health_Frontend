@@ -162,6 +162,7 @@ export interface Insurance {
   policyNumber: string | null;
   phone1: string | null;
   phone2: string | null;
+  email: string | null;
 }
 
 export interface EmergencyContact {
@@ -170,8 +171,19 @@ export interface EmergencyContact {
   name: string;
   phone1: string;
   phone2: string | null;
+  email: string | null;
   priority: number;
   emergencyType: string | null;
+}
+
+export interface HealthTopic {
+  topicId: string;
+  moduleKey: string;
+  title: string;
+  summary: string | null;
+  body: string | null;
+  sortOrder: number;
+  isActive: boolean;
 }
 
 export interface EmergencyAlert {
