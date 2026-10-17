@@ -9,9 +9,9 @@ import Select from "../form/Select";
 import nextOfKinApi, { NextOfKinBody } from "../../api/nextOfKinApi";
 
 const priorityOptions = [
-  { value: 1, label: "Primary" },
-  { value: 2, label: "Secondary" },
-  { value: 3, label: "Other" },
+  { value: "1", label: "Primary" },
+  { value: "2", label: "Secondary" },
+  { value: "3", label: "Other" },
 ];
 
 const emptyForm: NextOfKinBody = {
@@ -236,7 +236,7 @@ export default function NextOfKinCard() {
 
             <Select
               options={priorityOptions}
-              defaultValue={form.priority}
+              defaultValue={String(form.priority ?? "")}
               placeholder="Select priority"
               onChange={(value) =>
                 setForm({
